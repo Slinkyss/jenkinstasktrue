@@ -28,6 +28,7 @@ pipeline {
             } else {
                 withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {
                 sh '''
+            git rm test.txt
             git branch -D trashtest
             git checkout -b trashtest
             git revert -m 1 HEAD  
