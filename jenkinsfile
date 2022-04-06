@@ -28,7 +28,6 @@ pipeline {
             } else {
                 withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {
                 sh '''
-            git branch -D trashtest
             git checkout main
             git pull origin main
             git checkout -b trashtest
