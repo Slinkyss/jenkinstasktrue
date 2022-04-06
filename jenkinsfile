@@ -3,34 +3,32 @@ pipeline {
      stages {
          stage('Build') {
              steps {
-                 sh 'echo "Building"'
+                 sh 'echo "Building..."'
              }
-         }
-         stage('Input'){
-                         steps {
-                input('Do you want to proceed?')
-            }
-        }
+         }      
          stage('Upload to AWS') {
               steps {
-                  withAWS(region:'eu-west-1',credentials:'awsid') {
+                  script {
+             def USER_INPUT = input(
+                    message: 'Upload to S3 Bucket?',
+                    parameters: [
+                            [$class: 'ChoiceParameterDefinition',
+                             choices: ['no','yes'].join('\n'),
+                             name: 'input',
+                             description: 'Menu - select box option']
+                    ])
+
+            echo "The answer is: ${USER_INPUT}"
+
+            if( "${USER_INPUT}" == "yes"){
+                withAWS(region:'eu-west-1',credentials:'awsid') {
                   sh 'echo "Uploading content with AWS creds"'
                       s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'first-stack.yaml', bucket:'jenkinsslinkisbucket')
                   }
-              }
-         }
-
-     }
-     post {
-
-        success {
-            echo 'I succeeded!'
-        }
-        aborted {
-            withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {      
-            echo 'Aborted!'
-            sh '''
-            git branch -d trashtest
+            } else {
+                withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {
+                sh '''
+            git branch -D trashtest
             git checkout -b trashtest
             git revert -m 1 HEAD  
             git checkout main
@@ -39,10 +37,11 @@ pipeline {
             git push 
             git branch -d trashtest
 
-            '''
-
+                '''
+            }
+            }
         }
-        }
-
     }
+    }
+}
 }
