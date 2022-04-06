@@ -28,15 +28,15 @@ pipeline {
             } else {
                 withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {
                 sh '''
-            git rm test.txt
             git branch -D trashtest
+            git checkout main
+            git pull origin main
             git checkout -b trashtest
             git revert -m 1 HEAD  
             git checkout main
-            git pull origin main
             git merge trashtest
-            git push 
-            git branch -d trashtest
+            git push origin main
+            git branch -D trashtest
 
                 '''
             }
