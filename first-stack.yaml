@@ -6,8 +6,8 @@ Description: CF template to create the first security group
 Parameters:
   OwnerName:
     Type: String
-    Default: Slinkis
-    Description: Slinkis
+    Default: slinkis
+    Description: slinkis
 
   InstanceTypeParameter:
     Type: String
