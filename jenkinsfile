@@ -25,7 +25,7 @@ pipeline {
                   sh 'echo "Uploading content with AWS creds"'
                       s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'first-stack.yaml', bucket:'jenkinsslinkisbucket')
                       sh'''
-                      aws cloudformation update-stack --stack-name jenkinstask --template-url https://jenkinsslinkisbucket.s3.eu-west-1.amazonaws.com/first-stack.yaml --parameters Ownername slinkis 
+                      aws cloudformation update-stack --stack-name jenkinstask --template-url https://jenkinsslinkisbucket.s3.eu-west-1.amazonaws.com/first-stack.yaml --parameters Ownername=slinkis 
                       '''
                 
                   }
