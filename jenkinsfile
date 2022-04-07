@@ -24,6 +24,10 @@ pipeline {
                 withAWS(region:'eu-west-1',credentials:'awsid') {
                   sh 'echo "Uploading content with AWS creds"'
                       s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'first-stack.yaml', bucket:'jenkinsslinkisbucket')
+                      sh'''
+                      aws cloudformation update-stack --stack-name jenkinstask --template-url s3://jenkinsslinkisbucket/first-stack.yaml
+                      '''
+                
                   }
             } else {
                 withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {
