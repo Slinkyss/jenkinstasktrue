@@ -13,14 +13,14 @@ pipeline {
                     message: 'Upload to S3 Bucket?',
                     parameters: [
                             [$class: 'ChoiceParameterDefinition',
-                             choices: ['no','yes'].join('\n'),
+                             choices: ['revert','upload'].join('\n'),
                              name: 'input',
                              description: 'Menu - select box option']
                     ])
 
             echo "The answer is: ${USER_INPUT}"
-
-            if( "${USER_INPUT}" == "yes"){
+            stage('Uplodaing') {
+            if( "${USER_INPUT}" == "upload"){
                 withAWS(region:'eu-west-1',credentials:'awsid') {
                   sh 'echo "Uploading content with AWS creds"'
                       s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'first-stack.yaml', bucket:'jenkinsslinkisbucket')
@@ -29,6 +29,8 @@ pipeline {
                       '''
                 
                   }
+            }
+            }
             } else {
                 withCredentials([gitUsernamePassword(credentialsId: 'githubpassword', gitToolName: 'Default')]) {
                 sh '''
