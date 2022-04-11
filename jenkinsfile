@@ -27,7 +27,9 @@ pipeline {
                       sh'''
                       aws cloudformation update-stack --stack-name jenkinstask --template-url https://jenkinsslinkisbucket.s3.eu-west-1.amazonaws.com/first-stack.yaml 
                       '''
-                
+                 stage('Sucess') {
+            
+         }      
                   }
             } else {
                 stage('Reverting') {
@@ -43,6 +45,7 @@ pipeline {
             git branch -D trashtest
 
                 '''
+                stage('Sucess') {} 
                 }
             }
             }
