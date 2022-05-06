@@ -6,8 +6,8 @@ Description: CF template to create the first security group
 Parameters:
   OwnerName:
     Type: String
-    Default: Slinkis
-    Description: Slinkis
+    Default: Slinkiss
+    Description: Slinkiss
 
   InstanceTypeParameter:
     Type: String
@@ -18,7 +18,7 @@ Parameters:
       Enter t2.micro
 
 Resources:
-  FirstSG:
+  Secondgroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: The first security group
@@ -61,7 +61,7 @@ Resources:
           DeleteOnTermination: true
           DeviceIndex: "0"
           GroupSet:
-            - Ref: FirstSG
+            - Ref: Secondgroup
           SubnetId: "subnet-031c427dc462ec142"
       Tags:
         - Key: "CreatedBy"
@@ -79,13 +79,44 @@ Resources:
             sudo amazon-linux-extras install epel java-openjdk11 -y
             sudo yum install -y jenkins
             sudo systemctl daemon-reload
-            sudo systemctl start jenkins
-            sudo systemctl enable jenkins
-            sudo system update
+            cd /
+            cd /var/lib/jenkins
+            sudo mkdir init.groovy.d
+            cd init.groovy.d
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/Dockerfile .
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/jenkins-plugins .
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/default.user.groovy .
+            sudo yum install -y docker
+            sudo systemctl start docker
+            sudo docker build -t slinkis/jenkins .
+            docker run -d --name jenkins-server -p 8080:8080 slinkis/jenkins
+            cd /var/
+            sudo mkdir jobs
+            cd jobs
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/jobs/ . --recursive
+            cd ..
+            sudo chmod -R 777 /var/jobs/
+            sudo mkdir secrets
+            cd secrets
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/secrets/ . --recursive
+            cd ..
+            sudo chmod -R 777 /var/secrets/
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/credentials.xml .
+            sudo chmod -R 777 credentials.xml
+            sudo aws s3 cp s3://slinkis-bucket-jenkins/secret.key .
+            sudo chmod -R 777 secret.key
+            sudo docker cp /var/secret.key jenkins-server:/var/jenkins_home/
+            sudo docker cp /var/secrets jenkins-server:/var/jenkins_home/
+            sudo docker cp /var/jobs jenkins-server:/var/jenkins_home/
+            sudo docker cp /var/credentials.xml jenkins-server:/var/jenkins_home/
+            sudo docker container restart jenkins-server
 
-Outputs:
-  JenkinsUrl:
-    Description: Jenkins URL
-    Value: !Sub
-      - http://${PublicIP}:8080
-      - {PublicIP: !GetAtt FirstEC2Instance.PublicIp}
+
+
+
+
+
+
+
+
+
