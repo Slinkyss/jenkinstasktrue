@@ -28,9 +28,7 @@ pipeline {
                        '''
                       s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'first-stack.yaml', bucket:'jenkinsslinkisbucket')
                       cfnUpdate(stack: 'Jenkins', url: 'https://jenkinsslinkisbucket.s3.eu-west-1.amazonaws.com/first-stack.yaml')
-                                }
-             }
-         }
+
                  stage('Sucess') {
             
          }      
