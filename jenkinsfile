@@ -21,6 +21,7 @@ pipeline {
             echo "The answer is: ${USER_INPUT}"
 
             if( "${USER_INPUT}" == "upload"){
+                stage('Uploading'){
                 withAWS(region:'eu-west-1',credentials:'awsid') {
                   sh 'echo "Uploading content with AWS creds"'
                        sh'''
@@ -28,7 +29,7 @@ pipeline {
                        '''
                       s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'first-stack.yaml', bucket:'jenkinsslinkisbucket')
                       cfnUpdate(stack: 'jenkins-stack', url: 'https://jenkinsslinkisbucket.s3.eu-west-1.amazonaws.com/first-stack.yaml')
-
+                }
                  stage('Sucess') {
             
          }      
