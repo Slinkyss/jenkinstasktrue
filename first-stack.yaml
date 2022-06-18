@@ -112,6 +112,7 @@ Resources:
             sudo docker exec jenkins-server git config --global user.email "daniel284222@gmail.com"
             sudo docker exec jenkins-server git config --global user.name "Slinkyss"
             sudo docker container restart jenkins-server
+            cd
 
 
 
